@@ -104,15 +104,13 @@ void HEGall19UL::Loop()
     Long64_t nbytes = 0, nb = 0; //MakeClass
     
     //cout<<"nentries"<<nentries<<endl;
-    //nentries = 1000; //72372097 olay var!
+    //nentries = 10000; //72372097 olay var!
     //TH2D *hotzonemap = (TH2D*)hotzone->Get("h2hotfilter");
     //TH2D *hotzonemap = (TH2D*)hotzone->Get("h2hot_ul17_plus_hbpw89");
     //TH2D *coldzonemap = (TH2D*)coldzone->Get("all/h2hole");
     TH2D *hot_coldzonemap = (TH2D*)hot_cold->Get("h2hot_hot_cold");
     TFile myFile("12Nisan_HEG_VX_mpf_133_6389_alleta.root", "RECREATE");
     
-    
-    //CondFormat'ın icinden cektigimiz text dosyaları,degistirdiklerim var!!///
     JetCorrectorParameters *pfchs_l1 = new JetCorrectorParameters("CondFormats/JetMETObjects/data/Summer19UL17_RunF_V5_DATA_L1FastJet_AK4PFchs.txt");
     JetCorrectorParameters *pfchs_l2 = new JetCorrectorParameters("CondFormats/JetMETObjects/data/Summer19UL17_RunF_V5_DATA_L2Relative_AK4PFchs.txt");
     JetCorrectorParameters *pfchs_l3 = new JetCorrectorParameters("CondFormats/JetMETObjects/data/Summer19UL17_RunF_V5_DATA_L3Absolute_AK4PFchs.txt");
@@ -127,12 +125,12 @@ void HEGall19UL::Loop()
     FactorizedJetCorrector *mpfchs_jec = new FactorizedJetCorrector(vParam_pfchs);
     
     static const int netabins = 9;
-       //static const double etabins[netabins+1] = {0,0.5};
-       static const double etabins[netabins+1] = {0,0.5,1.0,1.5,2.0,2.5,3.0,3.2,4.7,1.3};
-       /*//static const double etabins[netabins+1] = {0,0.5,1.0,1.5,2.0,2.5,3.0,3.2,4.7};
-       //static const double etabins[netabins+1] = {0,0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0};
-       //static const double etabins[netabins+1] = {0,1.3,3.2,4.7};
-       //static const double etabins[netabins+1] = {0,1.3};
+    //static const double etabins[netabins+1] = {0,0.5};
+    static const double etabins[netabins+1] = {0,0.5,1.0,1.5,2.0,2.5,3.0,3.2,4.7,1.3};
+    /*//static const double etabins[netabins+1] = {0,0.5,1.0,1.5,2.0,2.5,3.0,3.2,4.7};
+    //static const double etabins[netabins+1] = {0,0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0};
+    //static const double etabins[netabins+1] = {0,1.3,3.2,4.7};
+    //static const double etabins[netabins+1] = {0,1.3};
            
        };*/
     const double x[9][129]=
@@ -162,10 +160,6 @@ void HEGall19UL::Loop()
     TH2::SetDefaultSumw2();
     //std::vector<TH1F*> vectptt[7];
     
-     /*std::vector<TProfile*> vectptt; //dataquality icin
-     std::vector< std::vector< TProfile*> > V2daq;   //dataquality icin
-     std::vector< std::vector< std::vector< TProfile*> > > VVdaq;    //dataquality icin
-    */
     std::vector<TH2D*> vectptt; //mpf icin
     std::vector< std::vector< TH2D*> > V2daq;   //mpf icin
     std::vector< std::vector< std::vector< TH2D*> > > VVdaq;
@@ -174,28 +168,10 @@ void HEGall19UL::Loop()
     vector<double> v3(n3+1);
     for (unsigned int i = 0; i != n3+1; ++i) v3[i] = -5. + i*0.02;
     
-    for(int l=0;l<6;++l){ //triggerlara göre, dataqualityde 2 boyutlu vector cizdirdiğinde  acarsin
+    for(int l=0;l<6;++l){
     for ( int k = 0; k<netabins; ++k)
     {
-       /*TProfile *pchf_0= new TProfile(Form("pchf_%d_%d",l,k),"pchf",nx[k],&x[k][0]); vectptt.push_back (pchf_0); pchf_0->Sumw2();
-       TProfile *pnhf_1= new TProfile(Form("pnhf_%d_%d",l,k),"pnhf",nx[k],&x[k][0]); vectptt.push_back (pnhf_1); pnhf_1->Sumw2();
-       TProfile *pnef_2= new TProfile(Form("pnef_%d_%d",l,k),"pnef",nx[k],&x[k][0]); vectptt.push_back (pnef_2); pnef_2->Sumw2();
-       TProfile *pcef_3= new TProfile(Form("pcef_%d_%d",l,k),"pcef",nx[k],&x[k][0]); vectptt.push_back (pcef_3); pcef_3->Sumw2();
-       TProfile *pmuf_4= new TProfile(Form("pmuf_%d_%d",l,k),"pmuf",nx[k],&x[k][0]); vectptt.push_back (pmuf_4); pmuf_4->Sumw2();
-       TProfile *ppuf_5= new TProfile(Form("ppuf_%d_%d",l,k),"ppuf",nx[k],&x[k][0]); vectptt.push_back (ppuf_5); ppuf_5->Sumw2();
-       TProfile *phhf_6= new TProfile(Form("phhf_%d_%d",l,k),"phhf",nx[k],&x[k][0]); vectptt.push_back (phhf_6); phhf_6->Sumw2();
-       TProfile *phef_7= new TProfile(Form("phef_%d_%d",l,k),"phef",nx[k],&x[k][0]); vectptt.push_back (phef_7); phef_7->Sumw2();
        
-       
-       TProfile *pchftp_8  = new TProfile(Form("pchftp_%d_%d",l,k),"pchftp",nx[k],&x[k][0]); vectptt.push_back (pchftp_8);  pchftp_8->Sumw2();
-       TProfile *pnhftp_9  = new TProfile(Form("pnhftp_%d_%d",l,k),"pnhftp",nx[k],&x[k][0]); vectptt.push_back (pnhftp_9);  pnhftp_9->Sumw2();
-       TProfile *pneftp_10 = new TProfile(Form("pneftp_%d_%d",l,k),"pneftp",nx[k],&x[k][0]); vectptt.push_back (pneftp_10); pneftp_10->Sumw2();
-       TProfile *pceftp_11 = new TProfile(Form("pceftp_%d_%d",l,k),"pceftp",nx[k],&x[k][0]); vectptt.push_back (pceftp_11); pceftp_11->Sumw2();
-       TProfile *pmuftp_12 = new TProfile(Form("pmuftp_%d_%d",l,k),"pmuftp",nx[k],&x[k][0]); vectptt.push_back (pmuftp_12); pmuftp_12->Sumw2();
-       TProfile *ppuftp_13 = new TProfile(Form("ppuftp_%d_%d",l,k),"ppuftp",nx[k],&x[k][0]); vectptt.push_back (ppuftp_13); ppuftp_13->Sumw2();
-       TProfile *phhftp_14 = new TProfile(Form("phhftp_%d_%d",l,k),"phhftp",nx[k],&x[k][0]); vectptt.push_back (phhftp_14); phhftp_14->Sumw2();
-       TProfile *pheftp_15 = new TProfile(Form("pheftp_%d_%d",l,k),"pheftp",nx[k],&x[k][0]); vectptt.push_back (pheftp_15); pheftp_15->Sumw2();
-        */
         TH2D *h2mpf_0= new TH2D (Form("h2mpf_%d_%d",l,k),"h2mpf",nx[k],&x[k][0],n3,&v3[0]); vectptt.push_back (h2mpf_0); h2mpf_0->Sumw2();
         TH2D *h2mpfx_1= new TH2D (Form("h2mpfx_%d_%d",l,k),"h2mpfx",nx[k],&x[k][0],n3,&v3[0]); vectptt.push_back (h2mpfx_1); h2mpfx_1->Sumw2();
         
@@ -207,18 +183,14 @@ void HEGall19UL::Loop()
     TLorentzVector p4pf;
     TLorentzVector mp4pf;
     
-    //trigger PT aralıklarını buraya yerlestırdım
-   // vector<double>vecttrigcuts={43,64,64,84,114,272,6389}; //15Aralik
     vector<double>vecttrigcuts={74,74,74,97,133,272,6389};   //22 Kasim yeni trigger rangeler - 19Aralik
-    //vector<double>vecttrigcuts={49,49,64,97,133,272,6389};   //yeni trigger rangeler
-    
    
     //=================Define the variables for Correction========================
     
-    float pf_jtpt[100],pf_jt_eta[100],pf_jt_phi[100];    //corr definition (disarda kalabilir)
+    float pf_jtpt[100],pf_jt_eta[100],pf_jt_phi[100];    //corr definition
     vector<float>pfchs_ptcorr;
     
-    float mpf_jtpt[100],mpf_jt_eta[100],mpf_jt_phi[100];    //corr definition (disarda kalabilir)
+    float mpf_jtpt[100],mpf_jt_eta[100],mpf_jt_phi[100];    //corr definition
     vector<float>mpfchs_ptcorr;
     
     //---------------------------events dongusu icine girdik---------
@@ -228,11 +200,8 @@ void HEGall19UL::Loop()
         Long64_t ientry = LoadTree(jentry);             //MakeClass
         if (ientry < 0) break;                          //MakeClass
         nb = fChain->GetEntry(jentry);   nbytes += nb;  //MakeClass
-        
-       // cout<<"\r"<<"event number: "<<jentry<<"/ "<<nentries<<flush;
-        
+       
         if (TriggerDecision_.empty()) continue;
-        //double l_pt1=0.0, l_pt2=0.0, l_pt3=0.0;
         if (FilterDecision_.size()!=0)  continue;
         
         int pf_njt =PFJetsCHS__;        //==========corr definition
@@ -269,10 +238,9 @@ void HEGall19UL::Loop()
        Int_t           mjt3leads[3]; // The three leading jets
        for (int i = 0; i<3; ++i) mjt3leads[i] = -1;
        /////////////////////////////////////////////////////
-       ///Jet loop for  mpf?
+       ///Jet loop for  mpf
        /////////////////////////////////////////////////////
         
-         
          for (int j=(PFJetsCHS__-1); j>-1; j--)
               {
                   
@@ -280,9 +248,7 @@ void HEGall19UL::Loop()
                                   PFJetsCHS__P4__fCoordinates_fZ[j],PFJetsCHS__P4__fCoordinates_fT[j]);
          
               //================Calculation of correction ///
-                 // cout<<"mpftest0 "<<endl;
                   mpf_jtpt[j]   = mp4pf.Pt(); mpf_jt_eta[j] = mp4pf.Eta(); mpf_jt_phi[j] = mp4pf.Phi();
-                  //double pf_pt_old=mpf_jtpt[j];
                   
                   float rho=EvtHdr__mPFRho;
                   double area=PFJetsCHS__area_[j];
@@ -294,11 +260,11 @@ void HEGall19UL::Loop()
                   mpfchs_ptcorr[j]= ptraw*mpfchs_jec->getCorrection();
                   
                   double pf_pt=mpfchs_ptcorr[j]; double pf_jteta=mpf_jt_eta[j];double pf_phi=mpf_jt_phi[j];
-                  mjtpt[j] = pf_pt; //jteta[j]= pf_jteta; jtphi[j]= pf_phi; //tag and probe corr
+                  mjtpt[j] = pf_pt;
                   
               //=====================the end of correction////////
 
-         //cout<<"mpftest01 "<<endl;
+                  
                   //==============finding leading jets
                     if (mjt3leads[0]==-1 or mjtpt[mjt3leads[0]]<mjtpt[j]) {
                       mjt3leads[2] = mjt3leads[1];
@@ -313,18 +279,12 @@ void HEGall19UL::Loop()
                  
                   
               }
-         //cout<<"mpftest02 "<<endl;
-         // qcdpass2: 1 2  qcdpass3: 0 2
-          bool mpass1=false;
-          bool mpass2=false;
-          bool mpass3=false;
+
+          bool mpass1=false; bool mpass2=false; bool mpass3=false;
               if(mjt3leads[0]>-1) mpass1=true;
               if(mjt3leads[1]>-1) mpass2=true;
               if(mjt3leads[2]>-1) mpass3=true;
-              //if (qcdpass.size()>=2) cout<<" jt3leads[0]  :"<<jt3leads[0] <<" jt3leads[1]  :"<<jt3leads[1]<<" jt3leads[2]  :"<<jt3leads[2]<<" qcdpass: "<<qcdpass[jj]<<"   jentry: "<<jentry<<endl;
-
-         // cout<<"mpftest02 "<<endl;
-          
+        
           //-----------------------------------Tag and probe-----------
           //the leading indices
           
@@ -334,10 +294,8 @@ void HEGall19UL::Loop()
           if(mpass1 and mpass2){
               mptave = (mi1>=0 ? 0.5 * (mjtpt[mi0] + mjtpt[mi1]) : mjtpt[mi0]);
           }
-        // cout<<"mpftest1 "<<endl;
-
-        
-        
+      
+    
         
          /////////////////////////////////////////////////////
          ///Jet Loop
@@ -358,12 +316,8 @@ void HEGall19UL::Loop()
             float rho=EvtHdr__mPFRho;
             double area=PFJetsCHS__area_[j];
             double ptraw = pf_jtpt[j]/PFJetsCHS__cor_[j];
-            //double ptraw = pf_jtpt[j]+rho*area; //undo yapmadan ptraw hesabi
-            pfchs_jec->setJetEta(pf_jt_eta[j]);
-            pfchs_jec->setJetPt(ptraw);
-            pfchs_jec->setRho(rho);
-            pfchs_jec->setJetA(area);
             
+            pfchs_jec->setJetEta(pf_jt_eta[j]); pfchs_jec->setJetPt(ptraw); pfchs_jec->setRho(rho); pfchs_jec->setJetA(area);
             pfchs_ptcorr[j]= ptraw*pfchs_jec->getCorrection();
             double pf_pt=pfchs_ptcorr[j];
             double pf_jteta=pf_jt_eta[j];
@@ -372,7 +326,8 @@ void HEGall19UL::Loop()
                 
             //=====================the end of correction////////
             
-                //====================mpf type1met=============
+            
+            //====================mpf type1met=============
                 //only use jets with corrected pt>Recopt to equalize DATA and MC thresholds
                 if(fabs(pf_jteta)<4.7){
                     if(pf_pt_old > 15.){
@@ -420,7 +375,6 @@ void HEGall19UL::Loop()
                                 if(TriggerDecision_[trdecindex]==trnameindex && ((mptave)>=vecttrigcuts[trnameindex] && (mptave)<vecttrigcuts[trnameindex+1]))
                                 {
                                                             if (mLS1.find(EvtHdr__mRun)!=mLS1.end()){ //======
-                                                            //cout<<"Run Number in the JSON " <<EvtHdr__mRun<<endl;
                                                             int loop_control=0; //======
                                                             auto LS_range = mLS1.equal_range(EvtHdr__mRun);//======
                                                             for (auto it=LS_range.first; it != LS_range.second; ++it)//======
@@ -428,7 +382,6 @@ void HEGall19UL::Loop()
                                                                     
                                                                     if (EvtHdr__mLumi>=vLS[it->second][0] && EvtHdr__mLumi<=vLS[it->second][1] )//======
                                                                     { loop_control=loop_control+1;//======
-                                                            //cout <<" in the JSON " << trnameindex<< "  "<<EvtHdr__mRun <<"  "<< EvtHdr__mLumi <<endl; //======
                                                             int _prescale =1;
                                                             int l1_ps= L1Prescale_[trdecindex]; //L1 Trigger
                                                             int hlt_ps= HLTPrescale_[trdecindex]; //HLT Trigger
@@ -438,54 +391,35 @@ void HEGall19UL::Loop()
                                                             _prescale = l1_ps * hlt_ps;
                                                             if (_prescale>=1 && _prescale<1000000){
                                                                 
-                                                                //int hotzonebin=hotzonemap->FindBin(pf_jteta,pf_phi);
-                                                                //int coldzonebin=coldzonemap->FindBin(pf_jteta,pf_phi);
                                                                 int hot_coldzonebin=hot_coldzonemap->FindBin(pf_jteta,pf_phi);
                                                                 //if(hotzonemap->GetBinContent(hotzonebin)==0.0 && (coldzonemap->GetBinContent(coldzonebin)==0.0))
                                                                 if(hot_coldzonemap->GetBinContent(hot_coldzonebin)==0.0)
                                                                 {
-                                                                    
-                                                                /*VVdaq[trnameindex][k][0]->Fill(pf_pt,PFJetsCHS__chf_[j]);
-                                                                VVdaq[trnameindex][k][1]->Fill(pf_pt,PFJetsCHS__nhf_[j]);
-                                                                VVdaq[trnameindex][k][2]->Fill(pf_pt,PFJetsCHS__nemf_[j]);
-                                                                VVdaq[trnameindex][k][3]->Fill(pf_pt,PFJetsCHS__cemf_[j]);
-                                                                VVdaq[trnameindex][k][4]->Fill(pf_pt,PFJetsCHS__muf_[j]);
-                                                                VVdaq[trnameindex][k][5]->Fill(pf_pt,PFJetsCHS__betaPrime_[j]);
-                                                                VVdaq[trnameindex][k][6]->Fill(pf_pt,PFJetsCHS__hf_hf_[j]);
-                                                                VVdaq[trnameindex][k][7]->Fill(pf_pt,PFJetsCHS__hf_phf_[j]);
-                                                                   */
+                                                               
                                                                     if((k==8) && (trnameindex==4) ) qcdpass4.push_back(j);
                                                                     if((k==8) && (trnameindex==5) ) qcdpass5.push_back(j);
                                                                                                                 }//hotzone
                                                                                                         }  //prescale>0
                                                                                                 } //lumisection ls cut from JSON //======
-                                                                        
                                                                                     } //Run number iteretive loop for JSON //======
-                                                                        //if(loop_control==0){cout <<"out of the JSON " << EvtHdr__mRun <<" , "<< EvtHdr__mLumi <<endl;} //======
                                                                                 } //Run check //======
-                                                           /* else { //======
-                                                                cout<<"out of the JSON " <<EvtHdr__mRun<<endl; //======
-                                                            } //====== */
-                                } //TriggerDecision
-                            } //trdecindex
-                        } //trnameindex
-                      }//mptave
-                    } // fabs
-                } //etabin
-            } //tightid
-        } //jets
+                                                                    } //TriggerDecision
+                                                            } //trdecindex
+                                                        } //trnameindex
+                                                    }//mptave
+                                                } // fabs
+                                            } //etabin
+                                        } //tightid
+                                    } //jets
         
         double met1   = oplus(mex,mey);
         double metphi1= atan2(mey,mex);
         
-        bool pass1=false;
-        bool pass2=false;
-        bool pass3=false;
+        bool pass1=false; bool pass2=false; bool pass3=false;
         for(unsigned int jj=0; jj<qcdpass4.size(); ++jj){
             if(qcdpass4[jj]==jt3leads[0]) pass1=true;
             if(qcdpass4[jj]==jt3leads[1]) pass2=true;
             if(qcdpass4[jj]==jt3leads[2]) pass3=true;
-            //if (qcdpass.size()>=2) cout<<" jt3leads[0]  :"<<jt3leads[0] <<" jt3leads[1]  :"<<jt3leads[1]<<" jt3leads[2]  :"<<jt3leads[2]<<" qcdpass: "<<qcdpass[jj]<<"   jentry: "<<jentry<<endl;
         }
         for(unsigned int jj=0; jj<qcdpass5.size(); ++jj){
             if(qcdpass5[jj]==jt3leads[0]) pass1=true;
@@ -525,36 +459,6 @@ void HEGall19UL::Loop()
                        double ptprobe = jtpt[iprobe];
                        double phiprobe = jtphi[iprobe];
                         
-                        // Dijet balance
-                        if ((alpha < 0.3) && (dphi > 2.7)) { // Back-to-back condition
-                            /*for(unsigned int t=0; t<qcdpass4.size(); ++t){
-                                if(itag==qcdpass4[t]){
-                                    VVdaq[4][8][8]->Fill(pttag,PFJetsCHS__chf_[iprobe]);
-                                    VVdaq[4][8][9]->Fill(pttag,PFJetsCHS__nhf_[iprobe]);
-                                    VVdaq[4][8][10]->Fill(pttag,PFJetsCHS__nemf_[iprobe]);
-                                    VVdaq[4][8][11]->Fill(pttag,PFJetsCHS__cemf_[iprobe]);
-                                    VVdaq[4][8][12]->Fill(pttag,PFJetsCHS__muf_[iprobe]);
-                                    VVdaq[4][8][13]->Fill(pttag,PFJetsCHS__betaPrime_[iprobe]);
-                                    VVdaq[4][8][14]->Fill(pttag,PFJetsCHS__hf_hf_[iprobe]);
-                                    VVdaq[4][8][15]->Fill(pttag,PFJetsCHS__hf_phf_[iprobe]);
-                                }
-                            }
-
-                            for(unsigned int t=0; t<qcdpass5.size(); ++t){
-                                if(itag==qcdpass5[t]){
-                                    VVdaq[5][8][8]->Fill(pttag,PFJetsCHS__chf_[iprobe]);
-                                    VVdaq[5][8][9]->Fill(pttag,PFJetsCHS__nhf_[iprobe]);
-                                    VVdaq[5][8][10]->Fill(pttag,PFJetsCHS__nemf_[iprobe]);
-                                    VVdaq[5][8][11]->Fill(pttag,PFJetsCHS__cemf_[iprobe]);
-                                    VVdaq[5][8][12]->Fill(pttag,PFJetsCHS__muf_[iprobe]);
-                                    VVdaq[5][8][13]->Fill(pttag,PFJetsCHS__betaPrime_[iprobe]);
-                                    VVdaq[5][8][14]->Fill(pttag,PFJetsCHS__hf_hf_[iprobe]);
-                                    VVdaq[5][8][15]->Fill(pttag,PFJetsCHS__hf_phf_[iprobe]);
-                                }
-                            }
-                          */
-                        } //alpha ve dphi cut
-                      
                       for(unsigned int t=0; t<qcdpass4.size(); ++t){
                           if(itag==qcdpass4[t] ){ //ptave cutini 11 Nisanda ekledim
                           //define mpf and mpfx
@@ -562,11 +466,11 @@ void HEGall19UL::Loop()
                           double mpfx   = met1*sin(metphi1 - jtphi[itag])/2;
                           mpf /= ptave;
                           mpfx /= ptave;
-                          //fill mpf and mpfx
+                              
+                          //================fill mpf and mpfx
                           VVdaq[4][8][0]->Fill(ptave,mpf,1);
                           VVdaq[4][8][1]->Fill(ptave,mpfx,1);
-                          //VVdaq[2][8][8]->Fill(pttag,PFJetsCHS__chf_[iprobe]);
-                          //VVdaq[2][8][9]->Fill(pttag,PFJetsCHS__nhf_[iprobe]);
+                          
                             }
                       }
                       
@@ -577,18 +481,13 @@ void HEGall19UL::Loop()
                           double mpfx   = met1*sin(metphi1 - jtphi[itag])/2;
                           mpf /= ptave;
                           mpfx /= ptave;
-                          //fill mpf and mpfx
+                          //======================fill mpf and mpfx
                           VVdaq[5][8][0]->Fill(ptave,mpf,1);
                           VVdaq[5][8][1]->Fill(ptave,mpfx,1);
-                          //VVdaq[2][8][8]->Fill(pttag,PFJetsCHS__chf_[iprobe]);
-                          //VVdaq[2][8][9]->Fill(pttag,PFJetsCHS__nhf_[iprobe]);
+                          
                             }
-                      }
-                      
-
-                      // cout<<"   itag    :"<<itag<<"     iprobe :    "<<iprobe<< "    Event   :" <<jentry <<"    etatag  :"<< etatag <<"   etaprobe  :   "<<etaprobe<<endl;
-                      
-                  }
+                       }
+                   }
 
                }
                 
